@@ -1,39 +1,50 @@
 package config
 
 import (
-	"github.com/didslm/env"
+	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/wlcmtunknwndth/hackBPA/internal/lib/slogResponse"
 	"log/slog"
 	"os"
+	"time"
 )
 
 type Config struct {
-	DB     Database `obj:"db"`
-	Server Server   `obj:"server"`
+	DB     Database `yaml:"db"`
+	Server Server   `yaml:"server"`
 }
 
 type Database struct {
-	DbUser  string `env:"db_user"`
-	DbPass  string `env:"db_pass"`
-	DbName  string `env:"db_name"`
-	SslMode string `env:"ssl_mode"`
+	DbUser  string `yaml:"db_user" env-required:"true"`
+	DbPass  string `yaml:"db_pass" env-required:"true"`
+	DbName  string `yaml:"db_name" env-required:"true"`
+	SslMode string `yaml:"ssl_mode" env-default:"disable"`
 }
 
 type Server struct {
-	Timeout     int    `env:"timeout"`
-	IdleTimeout int    `env:"idle_timeout"`
-	Address     string `env:"address"`
+	Timeout     time.Duration `yaml:"timeout" env-default:"15s"`
+	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"30s"`
+	Address     string        `yaml:"address" env-required:"true"`
 }
 
 func MustLoad() *Config {
 	const op = "config.MustLoad"
 
-	var config Config
-
-	if err := env.PopulateWithEnv(&config); err != nil {
-		slog.Error("couldn't load config file: ", slogResponse.SlogErr(err))
+	path, ok := os.LookupEnv("config_path")
+	if !ok || path == "" {
+		slog.Error("couldn't find config path:", slogResponse.SlogOp(op))
 		os.Exit(404)
 	}
 
-	slog.Info("loaded conf")
+	if _, err := os.Stat(path); err != nil {
+		slog.Error("couldn't find config path: ", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
+		os.Exit(404)
+	}
+
+	var cfg Config
+	if err := cleanenv.ReadConfig(path, &cfg); err != nil {
+		slog.Error("couldn't read config", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
+		os.Exit(404)
+	}
+
+	return &cfg
 }

@@ -1,36 +1,28 @@
-# HTTP routes 
+# This is the True Tech Hack project
 
-## POST: /Register
-input: {"username": string, "password": string}
+## Track №1. 
 
-## POST: /Login
-input: {"username": string, "password": string}
+### Улучшение клиентского опыта витрины МТС Live для пользователей с особыми потребностями
 
-## POST: /Logout
+### Task: 
 
-input: {} (empty)
+---
+Предложить решение, которое включает в себя отдельный сервис или дополнительную
+функциональность на витрине МТС Live для улучшения сценариев подбора 
+мероприятия, покупки билетов и посещения мероприятия для всех категорий 
+посетителей.
 
-Авторизация производится через логин-пароль, администраторы
-прописываются через БД. 
+Например, онлайн сурдоперевод для мюзиклов или индивидуальный рейтинг площадок 
+для конкретного пользователя. Решение может использовать данные о пользователе 
+и данные о мероприятии
+---
 
-## GET: /getMessage
-input: {"id": uint}
 
-output: {"message": string}
 
-## GET: /getTask
-input: {"id": uint}
+Credentials:
 
-output: {
-"id": 146099,
-"message": "Привет! Покупателю 310597 не возвращаются деньги: статус завис на confirmed. 356911",
-"user_id": 205592,
-"channel_id": 347308,
-"create_at": 1693353138227,
-"update_at": 1693353138227,
-"root_id": null,
-"edit_at": 0,
-"delete_at": 0,
-"is_pinned": false,
-"original_id": ""
-},
+- @eugi_eugenia (UX/UI, master chief)
+- @lkatekk (UX/Ui)
+- @preparabola (Frontend)
+- @vladdislav94 (ML)
+- @wlcmtunknwndth (Backend/ML)
