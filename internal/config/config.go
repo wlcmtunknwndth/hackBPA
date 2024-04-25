@@ -9,8 +9,9 @@ import (
 )
 
 type Config struct {
-	DB     Database `yaml:"db"`
-	Server Server   `yaml:"server"`
+	DB     Database `yaml:"db" env-required:"true"`
+	Server Server   `yaml:"server" env-required:"true"`
+	Nats   Nats     `yaml:"nats" env-required:"true"`
 }
 
 type Database struct {
@@ -24,6 +25,13 @@ type Server struct {
 	Timeout     time.Duration `yaml:"timeout" env-default:"15s"`
 	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"30s"`
 	Address     string        `yaml:"address" env-required:"true"`
+}
+
+type Nats struct {
+	Address       string        `yaml:"address"`
+	Retry         bool          `yaml:"retry"`
+	MaxReconnects int           `yaml:"max_reconnects"`
+	ReconnectWait time.Duration `yaml:"reconnect_wait"`
 }
 
 func MustLoad() *Config {
