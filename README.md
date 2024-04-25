@@ -15,6 +15,7 @@
 Например, онлайн сурдоперевод для мюзиклов или индивидуальный рейтинг площадок 
 для конкретного пользователя. Решение может использовать данные о пользователе 
 и данные о мероприятии
+
 ---
 
 
@@ -22,7 +23,7 @@
 Credentials:
 
 - @eugi_eugenia (UX/UI, master chief)
-- @lkatekk (UX/Ui)
+- @lkatekk (UX/UI)
 - @preparabola (Frontend)
 - @vladdislav94 (ML)
 - @wlcmtunknwndth (Backend/ML)
