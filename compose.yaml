@@ -10,6 +10,8 @@ services:
     depends_on:
        db:
          condition: service_healthy
+       nats:
+         condition: service_started
   db:
    image: postgres
    restart: always
@@ -33,7 +35,7 @@ services:
     image: nats
     ports:
       - "8222:8222"
-    command: "-"
+    command: "--data NATS --cluster nats://0.0.0.0:6222 --http_port 8222 "
 volumes:
   db:
     driver: local
