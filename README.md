@@ -22,8 +22,8 @@
 
 Credentials:
 
-- @eugi_eugenia (UX/UI, master chief)
-- @lkatekk (UX/UI)
+- @lkatekk (UX/UI, master chief)
+- @eugi_eugenia (UX/UI)
 - @preparabola (Frontend)
 - @vladdislav94 (ML)
 - @wlcmtunknwndth (Backend/ML)
