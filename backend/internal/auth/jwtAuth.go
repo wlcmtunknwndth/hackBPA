@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/wlcmtunknwndth/hackBPA/internal/lib/httpResponse"
 	"net/http"
 	"os"
 	"time"
@@ -20,7 +21,7 @@ const (
 	ttlToken           = 4 * time.Minute
 	statusUnauthorized = "Unauthorized"
 	statusBadRequest   = "Bad request"
-	authKeyName        = "auth_key"
+	authEnv            = "auth_key"
 )
 
 func checkRequest(r *http.Request) (*Info, error) {
@@ -36,7 +37,7 @@ func checkRequest(r *http.Request) (*Info, error) {
 	var info Info
 
 	token, err := jwt.ParseWithClaims(cookie.Value, &info, func(token *jwt.Token) (any, error) {
-		key, ok := os.LookupEnv(authKeyName)
+		key, ok := os.LookupEnv(authEnv)
 		if !ok {
 			return nil, fmt.Errorf("no secret key found")
 		}
@@ -54,6 +55,16 @@ func checkRequest(r *http.Request) (*Info, error) {
 	}
 
 	return &info, err
+}
+
+func IsAdmin(r *http.Request) (bool, error) {
+	const op = "auth.jwtAuth.IsAdmin"
+	inf, err := checkRequest(r)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return inf.IsAdmin, nil
 }
 
 func Access(r *http.Request) (*Info, error) {
@@ -78,7 +89,7 @@ func Refresh(w http.ResponseWriter, r *http.Request) error {
 	info.ExpiresAt = jwt.NewNumericDate(expiresAt)
 
 	//token := jwt.NewWithClaims(jwt.SigningMethodHS512, info)
-	key, ok := os.LookupEnv(authKeyName)
+	key, ok := os.LookupEnv(authEnv)
 	if !ok {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -94,4 +105,33 @@ func Refresh(w http.ResponseWriter, r *http.Request) error {
 		Expires: expiresAt,
 	})
 	return nil
+}
+
+func WriteNewToken(w http.ResponseWriter, usr User) {
+	var expiresAt = time.Now().Add(ttlToken)
+
+	inf := &Info{
+		Username: usr.Username,
+		IsAdmin:  usr.isAdmin,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expiresAt),
+		},
+	}
+
+	key, ok := os.LookupEnv(authEnv)
+	if !ok {
+		return
+	}
+
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS512, inf).SignedString([]byte(key))
+	if err != nil {
+		httpResponse.Write(w, http.StatusInternalServerError, internalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:    access,
+		Value:   token,
+		Expires: expiresAt,
+	})
 }

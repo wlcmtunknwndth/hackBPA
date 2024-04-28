@@ -2,6 +2,7 @@ services:
   server:
     environment:
       - config_path=/var/service_config/config.yaml
+      - auth_key=truetechhack2024
     build:
       context: .
       target: final

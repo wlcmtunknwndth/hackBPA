@@ -18,7 +18,12 @@ func main() {
 	if err != nil {
 		slog.Error("couldn't run nats:", slogResponse.SlogErr(err))
 	}
-	defer ns.Close()
+	defer func(ns *nats.Nats) {
+		err := ns.Close()
+		if err != nil {
+			slog.Error("couldn't close NATS:", slogResponse.SlogErr(err))
+		}
+	}(ns)
 
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
