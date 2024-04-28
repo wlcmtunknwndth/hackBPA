@@ -39,7 +39,7 @@ isAdmin  boolean //структура не десериализуется.
 
 empty body {}. В данном случае лишь стирается access-токен.
 
-### DELETE /delete_usr
+### DELETE /delete_user
 Для удаления пользователя должен быть jwt-токен администратора.
 
 { "username": "string_value" }
