@@ -3,12 +3,16 @@ package main
 import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/wlcmtunknwndth/hackBPA/internal/auth"
 	"github.com/wlcmtunknwndth/hackBPA/internal/broker/nats"
 	"github.com/wlcmtunknwndth/hackBPA/internal/config"
 	"github.com/wlcmtunknwndth/hackBPA/internal/lib/slogResponse"
+	"github.com/wlcmtunknwndth/hackBPA/internal/storage/postgres"
 	"log/slog"
 	"net/http"
 )
+
+const scope = "main"
 
 func main() {
 	cfg := config.MustLoad()
@@ -24,6 +28,7 @@ func main() {
 			slog.Error("couldn't close NATS:", slogResponse.SlogErr(err))
 		}
 	}(ns)
+	slog.Info("successfully initialized NATS")
 
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
@@ -38,6 +43,27 @@ func main() {
 		WriteTimeout: cfg.Server.Timeout,
 		IdleTimeout:  cfg.Server.IdleTimeout,
 	}
+
+	db, err := postgres.New(&cfg.DB)
+	if err != nil {
+		slog.Error("couldn't connect to storage", slogResponse.SlogOp(scope), slogResponse.SlogErr(err))
+		return
+	}
+	defer func(db *postgres.Storage) {
+		err := db.Close()
+		if err != nil {
+			slog.Error("couldn't close connection to storage", slogResponse.SlogOp(scope), slogResponse.SlogErr(err))
+			return
+		}
+	}(db)
+	slog.Info("successfully initialized storage")
+
+	authService := auth.Auth{Db: db}
+
+	router.Post("/register", authService.Register)
+	router.Post("/login", authService.LogIn)
+	router.Post("/logout", authService.LogOut)
+	router.Delete("/delete_user", authService.DeleteUser)
 
 	if err = srv.ListenAndServe(); err != nil {
 		slog.Error("failed to run server: ", slogResponse.SlogErr(err))

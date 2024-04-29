@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/lib/pq"
 	"github.com/wlcmtunknwndth/hackBPA/internal/config"
 )
 
@@ -10,10 +11,10 @@ type Storage struct {
 	driver *sql.DB
 }
 
-func New(config config.Config) (*Storage, error) {
+func New(config *config.Database) (*Storage, error) {
 	const op = "storage.postgres.New"
 
-	connStr := fmt.Sprintf("postgres://%s:%s@host.docker.internal:5432/%s?sslmode=disable", config.DB.DbUser, config.DB.DbPass, config.DB.DbName)
+	connStr := fmt.Sprintf("postgres://%s:%s@host.docker.internal:5432/%s?sslmode=disable", config.DbUser, config.DbPass, config.DbName)
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/wlcmtunknwndth/hackBPA/internal/lib/httpResponse"
 	"github.com/wlcmtunknwndth/hackBPA/internal/lib/slogResponse"
@@ -26,10 +27,10 @@ type User struct {
 //go:generate mockery --name Storage
 
 type Storage interface {
-	GetPassword(string) (string, error)
-	RegisterUser(*User) error
-	IsAdmin(string) bool
-	DeleteUser(string) error
+	GetPassword(context.Context, string) (string, error)
+	RegisterUser(context.Context, *User) error
+	IsAdmin(context.Context, string) (bool, error)
+	DeleteUser(context.Context, string) error
 }
 
 type Auth struct {
@@ -38,6 +39,9 @@ type Auth struct {
 
 func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	const op = "auth.auth.Register"
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+
 	var usr User
 
 	err := json.NewDecoder(r.Body).Decode(&usr)
@@ -47,9 +51,10 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = a.Db.RegisterUser(&usr); err != nil {
-		slog.Error("could't register user: ", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
+	if err = a.Db.RegisterUser(ctx, &usr); err != nil {
+		slog.Error("couldn't register user: ", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
 		httpResponse.Write(w, http.StatusInternalServerError, internalServerError)
+		return
 	}
 
 	WriteNewToken(w, usr)
@@ -59,6 +64,10 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 
 func (a *Auth) LogIn(w http.ResponseWriter, r *http.Request) {
 	const op = "auth.auth.Login"
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+
 	var usr User
 
 	err := json.NewDecoder(r.Body).Decode(&usr)
@@ -73,14 +82,17 @@ func (a *Auth) LogIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pass, err := a.Db.GetPassword(usr.Username)
+	pass, err := a.Db.GetPassword(ctx, usr.Username)
 	if err != nil || pass != usr.Password {
 		slog.Error("couldn't get password from storage: ", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
 		httpResponse.Write(w, http.StatusUnauthorized, unauthorized)
 		return
 	}
 
-	usr.isAdmin = a.Db.IsAdmin(usr.Username)
+	if usr.isAdmin, err = a.Db.IsAdmin(ctx, usr.Username); err != nil {
+		slog.Error("couldn't determine if user is admin: ", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
+		//httpResponse.Write(w, http.StatusInternalServerError,)
+	}
 
 	WriteNewToken(w, usr)
 
@@ -98,6 +110,9 @@ func (a *Auth) LogOut(w http.ResponseWriter, r *http.Request) {
 
 func (a *Auth) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	const op = "auth.auth.DeleteUser"
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
 
 	if ok, err := IsAdmin(r); !ok {
 		if err != nil {
@@ -121,7 +136,7 @@ func (a *Auth) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = a.Db.DeleteUser(qry.Username)
+	err = a.Db.DeleteUser(ctx, qry.Username)
 	if err != nil {
 		httpResponse.Write(w, http.StatusInternalServerError, internalServerError)
 		slog.Error("couldn't delete user: ", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
