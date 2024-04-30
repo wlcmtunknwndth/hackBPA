@@ -19,6 +19,7 @@ type Database struct {
 	DbPass  string `yaml:"db_pass" env-required:"true"`
 	DbName  string `yaml:"db_name" env-required:"true"`
 	SslMode string `yaml:"ssl_mode" env-default:"disable"`
+	Port    string `yaml:"db_port" env-default:"5432"`
 }
 
 type Server struct {

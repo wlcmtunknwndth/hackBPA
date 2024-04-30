@@ -32,7 +32,7 @@ func main() {
 
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
-	router.Use(middleware.Recoverer)
+	//router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 	router.Use(middleware.Logger)
 

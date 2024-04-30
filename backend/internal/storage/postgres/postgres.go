@@ -14,7 +14,7 @@ type Storage struct {
 func New(config *config.Database) (*Storage, error) {
 	const op = "storage.postgres.New"
 
-	connStr := fmt.Sprintf("postgres://%s:%s@host.docker.internal:5432/%s?sslmode=disable", config.DbUser, config.DbPass, config.DbName)
+	connStr := fmt.Sprintf("postgres://%s:%s@postgres:%s/%s?sslmode=%s", config.DbUser, config.DbPass, config.Port, config.DbName, config.SslMode)
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -25,7 +25,7 @@ func New(config *config.Database) (*Storage, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &Storage{db}, nil
+	return &Storage{driver: db}, nil
 }
 
 func (s *Storage) Close() error {
