@@ -19,9 +19,11 @@ const (
 )
 
 type User struct {
-	isAdmin  bool
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Age      string `json:"age"`
+	Gender   bool   `json:"gender"`
+	isAdmin  bool
 }
 
 //go:generate mockery --name Storage

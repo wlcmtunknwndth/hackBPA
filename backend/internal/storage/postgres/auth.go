@@ -33,7 +33,7 @@ func (s *Storage) RegisterUser(ctx context.Context, usr *auth.User) error {
 	newCtx, cancel := context.WithTimeout(ctx, time.Minute)
 	defer cancel()
 
-	_, err := s.driver.ExecContext(newCtx, registerUser, usr.Username, usr.Password)
+	_, err := s.driver.ExecContext(newCtx, registerUser, usr.Username, usr.Password, usr.Gender, usr.Age)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}

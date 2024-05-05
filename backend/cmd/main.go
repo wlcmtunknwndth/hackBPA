@@ -36,12 +36,19 @@ func main() {
 	router.Use(middleware.URLFormat)
 	router.Use(middleware.Logger)
 
+	//m := &autocert.Manager{
+	//	Cache:      autocert.DirCache("golang-autocert"),
+	//	Prompt:     autocert.AcceptTOS,
+	//	HostPolicy: autocert.HostWhitelist("example.org", "www.example.org"),
+	//}
+
 	srv := &http.Server{
 		Addr:         cfg.Server.Address,
 		Handler:      router,
 		ReadTimeout:  cfg.Server.Timeout,
 		WriteTimeout: cfg.Server.Timeout,
 		IdleTimeout:  cfg.Server.IdleTimeout,
+		//TLSConfig:    m.TLSConfig(),
 	}
 
 	db, err := postgres.New(&cfg.DB)
