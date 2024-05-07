@@ -51,6 +51,3 @@ networks:
 volumes:
   db:
     driver: local
-#secrets:
-#  db-password:
-#    file: db/password.txt

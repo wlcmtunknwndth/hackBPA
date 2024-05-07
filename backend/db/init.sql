@@ -23,8 +23,4 @@ CREATE TABLE public.events(
     name VARCHAR(128) NOT NULL,
     img_path VARCHAR(256),
     description VARCHAR(2048)
---     disability boolean default FALSE,
---     deaf boolean default FALSE,
---     blind boolean default FALSE,
---     neural boolean default FALSE
 );
