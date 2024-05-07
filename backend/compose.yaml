@@ -6,8 +6,11 @@ services:
     build:
       context: .
       target: final
+    volumes:
+      - D:\documents\hackTrueTech\data:/data
     ports:
       - "8888:8888"
+    networks: ["nats"]
     depends_on:
        postgres:
          condition: service_healthy
@@ -27,6 +30,7 @@ services:
      - PGUSER=postgres
    expose:
      - "5432:5432"
+   networks: ["nats"]
    healthcheck:
      test: [ "CMD", "pg_isready"]
      interval: 5s
@@ -37,7 +41,15 @@ services:
     image: nats
     ports:
       - "8887:8887"
-    command: "--cluster_name NATS --cluster nats://0.0.0.0:8887 --http_port 8222 "
+      - "4222:4222"
+      - "8222:8222"
+    command: "--cluster_name NATS -p 4222 --cluster nats://0.0.0.0:8887 --http_port 8222"
+    networks: ["nats"]
+
+networks:
+  nats:
+    name: nats
+
 volumes:
   db:
     driver: local

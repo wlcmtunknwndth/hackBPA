@@ -7,17 +7,17 @@ import (
 	"time"
 )
 
+const imageFolder = "/data/events"
+
 func (s *Storage) GetEvent(ctx context.Context, id uint) (*storage.Event, error) {
 	const op = "storage.postgres.events.GetEvent"
 
 	var event storage.Event
 
 	err := s.driver.QueryRowContext(ctx, getEvent, id).Scan(
-		event.Id, event.Price, event.Restrictions, event.Date,
-		event.Location, event.Name, event.ImgPath, event.Description,
-
-		event.Features.Disability, event.Features.Deaf, event.Features.Blind,
-		event.Features.Neural,
+		&event.Id, &event.Price, &event.Restrictions, &event.Date,
+		&event.Feature, &event.City, &event.Address, &event.Name,
+		&event.ImgPath, &event.Description,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -41,11 +41,8 @@ func (s *Storage) CreateEvent(ctx context.Context, event *storage.Event) (uint, 
 	const op = "storage.postgres.events.CreateEvent"
 
 	_, err := s.driver.ExecContext(ctx, createEvent, &event.Price,
-		&event.Restrictions, &event.Date, &event.Location,
-		&event.Name, &event.ImgPath, &event.Description,
-
-		&event.Features.Disability, &event.Features.Deaf,
-		&event.Features.Blind, &event.Features.Neural,
+		&event.Restrictions, &event.Date, &event.Feature, &event.City,
+		&event.Address, &event.Name, imageFolder, &event.Description,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
@@ -55,6 +52,7 @@ func (s *Storage) CreateEvent(ctx context.Context, event *storage.Event) (uint, 
 	if id, err = s.getId(event.Name, event.Date); err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
+
 	return id, nil
 }
 
@@ -66,3 +64,7 @@ func (s *Storage) DeleteEvent(ctx context.Context, id uint) error {
 	}
 	return nil
 }
+
+//func (s *Storage) GetEventsByFeature(date time.Time, feature string) []storage.Event {
+//
+//}

@@ -13,16 +13,16 @@ const (
 							price,
 							restrictions,
 							date,
-							location,
+                   			feature,
+							city,
+                   			address,
 							name,
 							img_path,
-							description,
-							disability,
-							deaf,
-							blind,
-							neural
-                   			) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)	
+							description
+                   			) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)	
 	`
-	getId       = "SELECT * FROM events WHERE name = $1 AND date = $2"
-	deleteEvent = "DELETE FROM events WHERE id = $1"
+	getId              = "SELECT id FROM events WHERE name = $1 AND date = $2"
+	changeImgPath      = "UPDATE events SET img_path=$1"
+	deleteEvent        = "DELETE FROM events WHERE id = $1"
+	getEventsByFeature = "SELECT * FROM events WHERE data BETWEEN $1 AND $2 AND feature = $3"
 )

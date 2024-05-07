@@ -52,24 +52,27 @@ Event JSON:
 
 ```JSON
 {
-    "id": uint,
-    "price": uint,
-    "restrictions": uint,
-    "location": "string",
-    "name": "string",
-    "description": "string",
-    "img_path": "string",
-    "date": "timestamp as string",
-    "features": {
-        "disability": bool,
-        "deaf": bool
-        "blind": bool
-        "neural": bool
-    }
+  "id": uint,
+  "price": uint,
+  "restrictions": uint,
+  "date": "timestamp as string",
+  "feature": "deaf",
+  "city": "moscow",
+  "address": "Malay Ordinka, 3",
+  "name": "Mayhem",
+  "img_path": "/path/to/event/image/folder",
+  "description": "chainsaw gutsfuck"
 }
 ```
 
 "restriction" is an age restriction, where num means lower bound
+"img_path" -- картинки для ивента будут в папке ./data/events/<id>, пронумерованной от 1
+"feature" -- для каждой особенности будет свой номер в бд, но для фронта:
+    1. disability - "проблемы с мобильностью"
+    2. deaf - "проблемы с слухом"
+    3. blind - "проблемы c зрением"
+    4. neuro - "нейроотличия"
+
 
 ### GET /event?id=
 
@@ -78,17 +81,13 @@ Event JSON:
     "id": uint,
     "price": uint,
     "restrictions": uint,
-    "location": "string",
-    "name": "string",
-    "description": "string",
-    "img_path": "/path/to/event/image/folder",
     "date": "timestamp as string",
-    "features": {
-        "disability": bool,
-        "deaf": bool,
-        "blind": bool,
-        "neural": bool
-    }
+    "feature": "deaf",
+    "city":"moscow",
+    "address":"Malaya Ordinka, 3",
+    "name": "Mayhem",
+    "img_path": "/path/to/event/image/folder",
+    "description": "chainsaw gutsfuck"
 }
 ```
 
@@ -101,20 +100,54 @@ Event JSON:
       "id": uint,
       "price": uint,
       "restrictions": uint,
-      "location": "string",
-      "name": "string",
-      "description": "string",
-      "img_path": "string",
       "date": "timestamp as string",
-      "features": {
-        "disability": bool,
-        "deaf": bool
-        "blind": bool
-        "neural": bool
-      }
+      "feature": "deaf",
+      "city":"moscow",
+      "address":"Malaya Ordinka, 3",
+      "name": "Mayhem",
+      "img_path": "/path/to/event/image/folder",
+      "description": "chainsaw gutsfuck"
     }
    ]       
 }
 ```
 
-### GET
+### POST /create_event
+
+```JSON
+{
+    "price": uint,
+    "restrictions": uint,
+    "date": "timestamp as string",
+    "feature": "deaf",
+    "city":"moscow",
+    "address":"Malaya Ordinka, 3",
+    "name": "Mayhem",
+    "description": "chainsaw gutsfuck"
+}
+```
+
+При создании возвращается id нового ивента.
+
+id присваивается автоматически для того, чтобы не возникало
+проблем
+
+Предположительно, будет рут для загрузки именно фотографий в папку 
+с определенный id
+
+### PATCH /patch_event
+
+### POST /create_event?id=<id>
+
+```JSON
+{
+    "price": uint,
+    "restrictions": uint,
+    "date": "timestamp as string",
+    "feature": "deaf",
+    "city":"moscow",
+    "address":"Malaya Ordinka, 3",
+    "name": "Mayhem",
+    "description": "chainsaw gutsfuck"
+}
+```

@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/wlcmtunknwndth/hackBPA/internal/auth"
 	"github.com/wlcmtunknwndth/hackBPA/internal/broker/nats"
 	"github.com/wlcmtunknwndth/hackBPA/internal/config"
+	"github.com/wlcmtunknwndth/hackBPA/internal/handlers/event"
 	"github.com/wlcmtunknwndth/hackBPA/internal/lib/slogResponse"
 	"github.com/wlcmtunknwndth/hackBPA/internal/storage/postgres"
 	"log/slog"
@@ -17,18 +19,6 @@ const scope = "main"
 func main() {
 	cfg := config.MustLoad()
 	slog.Info("Config: ", slog.Attr{Key: "Config", Value: slog.AnyValue(*cfg)})
-
-	ns, err := nats.New(cfg)
-	if err != nil {
-		slog.Error("couldn't run nats:", slogResponse.SlogErr(err))
-	}
-	defer func(ns *nats.Nats) {
-		err := ns.Close()
-		if err != nil {
-			slog.Error("couldn't close NATS:", slogResponse.SlogErr(err))
-		}
-	}(ns)
-	slog.Info("successfully initialized NATS")
 
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
@@ -65,12 +55,48 @@ func main() {
 	}(db)
 	slog.Info("successfully initialized storage")
 
+	ns, err := nats.New(&cfg.Nats, db)
+	if err != nil {
+		slog.Error("couldn't run nats:", slogResponse.SlogErr(err))
+		return
+	}
+	defer ns.Close()
+	slog.Info("nats created")
+
+	del, err := ns.EventDeleter(context.Background())
+	if err != nil {
+		slog.Error("couldn't run deleter", slogResponse.SlogErr(err))
+		return
+	}
+	defer del.Unsubscribe()
+	save, err := ns.EventSaver(context.Background())
+	if err != nil {
+		slog.Error("couldn't run saver", slogResponse.SlogErr(err))
+		return
+	}
+	defer save.Unsubscribe()
+
+	send, err := ns.EventSender(context.Background())
+	if err != nil {
+		slog.Error("couldn't run sender", slogResponse.SlogErr(err))
+		return
+	}
+	defer send.Unsubscribe()
+
+	slog.Info("successfully initialized NATS")
+
 	authService := auth.Auth{Db: db}
 
 	router.Post("/register", authService.Register)
 	router.Post("/login", authService.LogIn)
 	router.Post("/logout", authService.LogOut)
 	router.Delete("/delete_user", authService.DeleteUser)
+
+	eventService := event.EventsHandler{Broker: ns}
+
+	router.Post("/create_event", eventService.CreateEvent)
+	router.Get("/event", eventService.GetEvent)
+	router.Delete("/delete", eventService.DeleteEvent)
 
 	if err = srv.ListenAndServe(); err != nil {
 		slog.Error("failed to run server: ", slogResponse.SlogErr(err))
