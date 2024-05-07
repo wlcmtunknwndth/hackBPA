@@ -6,8 +6,6 @@ services:
     build:
       context: .
       target: final
-    volumes:
-      - D:\documents\hackTrueTech\data:/data
     ports:
       - "8888:8888"
     networks: ["nats"]
