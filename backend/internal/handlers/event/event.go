@@ -19,10 +19,12 @@ type EventsHandler struct {
 }
 
 const (
-	StatusBadRequest          = "Bad request"
-	StatusEventCreated        = "Event created"
-	StatusInternalServerError = "Internal server error"
-	StatusDeleted             = "Event deleted"
+	StatusNotEnoughPermissions = "Not enough permissions"
+	StatusUnauthorized         = "Unauthorized"
+	StatusBadRequest           = "Bad request"
+	StatusEventCreated         = "Event created"
+	StatusInternalServerError  = "Internal server error"
+	StatusDeleted              = "Event deleted"
 )
 
 func (e *EventsHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {

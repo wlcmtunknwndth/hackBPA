@@ -1,5 +1,7 @@
 # API
 
+# IP: wlcmtunknwndth.keenetic.pro:8888
+
 ## Auth
 
 Для авторизации между страницами и элементами сайта используются jwt-токены. 
@@ -74,7 +76,7 @@ Event JSON:
     4. neuro - "нейроотличия"
 
 
-### GET /event?id=
+### GET /event?id=<uint>     (Работает)
 
 ```JSON
 {
@@ -91,7 +93,13 @@ Event JSON:
 }
 ```
 
-### GET /events?filter=["deaf", "blind" or other features]&ordering=["date", "price"]&order=["ascending", "descending"]&location=['moscow', etc]
+Заголовки:
+
+200 - OK
+400 - Bad request (ошибка с параметром запроса)
+500 - Internal server error (внутренняя ошибка)
+
+### GET /events?filter=["deaf", "blind" or other features]&ordering=["date", "price"]&order=["ascending", "descending"]&location=['moscow', etc] (НЕ РАБОТАЕТ)
 
 ```JSON
 {
@@ -112,7 +120,7 @@ Event JSON:
 }
 ```
 
-### POST /create_event
+### POST /create_event (РАБОТАЕТ)
 
 ```JSON
 {
@@ -127,17 +135,25 @@ Event JSON:
 }
 ```
 
+Img_Path представлен в виде /data/events/<id> . Предполагаю, что фотки при
+загрузке будем просто нумеровать и доставать по очереди(1.jpeg, 2.jpeg и так далее)
+
 При создании возвращается id нового ивента.
+
+в виде ```Event created: id: 1```
 
 id присваивается автоматически для того, чтобы не возникало
 проблем
 
-Предположительно, будет рут для загрузки именно фотографий в папку 
-с определенный id
+Заголовки:
 
-### PATCH /patch_event
+201 -- Event created
+400 -- Bad request(неправильный json)
+500 -- Internal server error(ошибка на сервере)
 
-### POST /create_event?id=<id>
+### PATCH /patch_event (НЕ РАБОТАЕТ)
+
+### POST /delete_event?id=<id> (РАБОТАЕТ)
 
 ```JSON
 {
@@ -151,3 +167,9 @@ id присваивается автоматически для того, что
     "description": "chainsaw gutsfuck"
 }
 ```
+
+Заголовки:
+
+200 - Deleted
+400 - Bad Request (неправильный параметр)
+500 - Internal server error (внутреняя ошибка)
