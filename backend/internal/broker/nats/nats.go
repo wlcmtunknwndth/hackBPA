@@ -13,6 +13,7 @@ type Storage interface {
 	GetEvent(context.Context, uint) (*storage.Event, error)
 	DeleteEvent(context.Context, uint) error
 	CreateEvent(context.Context, *storage.Event) (uint, error)
+	PatchEvent(context.Context, *storage.Event) error
 }
 
 type Nats struct {

@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"encoding/json"
+	"github.com/wlcmtunknwndth/hackBPA/internal/lib/corsSkip"
 	"github.com/wlcmtunknwndth/hackBPA/internal/lib/httpResponse"
 	"github.com/wlcmtunknwndth/hackBPA/internal/lib/slogResponse"
 	"log/slog"
@@ -41,6 +42,7 @@ type Auth struct {
 
 func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	const op = "auth.auth.Register"
+	corsSkip.EnableCors(w)
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
@@ -66,7 +68,7 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 
 func (a *Auth) LogIn(w http.ResponseWriter, r *http.Request) {
 	const op = "auth.auth.Login"
-
+	corsSkip.EnableCors(w)
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
@@ -102,17 +104,17 @@ func (a *Auth) LogIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Auth) LogOut(w http.ResponseWriter, r *http.Request) {
+	corsSkip.EnableCors(w)
 	http.SetCookie(w, &http.Cookie{
 		Name:    access,
 		Expires: time.Now(),
 	})
-
 	return
 }
 
 func (a *Auth) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	const op = "auth.auth.DeleteUser"
-
+	corsSkip.EnableCors(w)
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 

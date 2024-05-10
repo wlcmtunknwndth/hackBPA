@@ -19,6 +19,8 @@ const (
 	AskDeleteEvent  = "del."
 	MustSendEvent   = "get.*"
 	AskGetEvent     = "get."
+	MustPatchEvent  = "patch.*"
+	AskPatchEvent   = "patch."
 )
 
 func convertUintToString(num uint) string {
@@ -33,10 +35,6 @@ func convertUintToByte(num uint) []byte {
 	binary.BigEndian.PutUint64(data, uint64(num))
 	return data
 }
-
-//func convertByteToUint(data []byte) uint {
-//
-//}
 
 func convertStrToUint(str string) (uint64, error) {
 	return strconv.ParseUint(str, 10, 64)
@@ -151,4 +149,31 @@ func (n *Nats) EventDeleter(ctx context.Context) (*nats.Subscription, error) {
 
 func (n *Nats) AskDelete(id uint) error {
 	return n.b.Publish(fmt.Sprintf("%s%d", AskDeleteEvent, id), nil)
+}
+
+func (n *Nats) EventPatcher(ctx context.Context) (*nats.Subscription, error) {
+	const op = "broker.nats.event.EventPatcher"
+	sub, err := n.b.Subscribe(MustPatchEvent, func(msg *nats.Msg) {
+		var event storage.Event
+		if err := json.Unmarshal(msg.Data, &event); err != nil {
+			return
+		}
+		if err := n.db.PatchEvent(ctx, &event); err != nil {
+			slog.Error("couldn't patch event", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
+			return
+		}
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	return sub, nil
+}
+
+func (n *Nats) AskPatch(event *storage.Event) error {
+	const op = "broker.nats.event.AskPatch"
+	data, err := json.Marshal(event)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	return n.b.Publish(fmt.Sprintf("%s%d", AskPatchEvent, event.Id), data)
 }
