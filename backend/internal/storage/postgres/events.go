@@ -65,12 +65,12 @@ func (s *Storage) DeleteEvent(ctx context.Context, id uint) error {
 	return nil
 }
 
-func (s *Storage) PatchEvent(ctx context.Context, id uint, event *storage.Event) error {
+func (s *Storage) PatchEvent(ctx context.Context, event *storage.Event) error {
 	const op = "storage.postgres.events.PatchEvent"
 
 	_, err := s.driver.ExecContext(ctx, patchEvent, &event.Price,
 		&event.Restrictions, &event.Date, &event.Feature, &event.City,
-		&event.Address, &event.Name, &event.Description, &id)
+		&event.Address, &event.Name, &event.Description, &event.Id)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
