@@ -87,6 +87,12 @@ func main() {
 
 	authService := auth.Auth{Db: db}
 
+	router.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		if request.Method == http.MethodOptions {
+			writer.WriteHeader(http.StatusOK)
+			return
+		}
+	})
 	router.Post("/register", authService.Register)
 	router.Post("/login", authService.LogIn)
 	router.Post("/logout", authService.LogOut)
