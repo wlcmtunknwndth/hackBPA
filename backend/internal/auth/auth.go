@@ -42,9 +42,8 @@ type Auth struct {
 
 func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 	const op = "auth.auth.Register"
-	if corsSkip.EnableCors(w, r) {
-		return
-	}
+	corsSkip.EnableCors(w, r)
+
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
@@ -70,9 +69,8 @@ func (a *Auth) Register(w http.ResponseWriter, r *http.Request) {
 
 func (a *Auth) LogIn(w http.ResponseWriter, r *http.Request) {
 	const op = "auth.auth.Login"
-	if corsSkip.EnableCors(w, r) {
-		return
-	}
+	corsSkip.EnableCors(w, r)
+
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
@@ -108,9 +106,7 @@ func (a *Auth) LogIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Auth) LogOut(w http.ResponseWriter, r *http.Request) {
-	if corsSkip.EnableCors(w, r) {
-		return
-	}
+	corsSkip.EnableCors(w, r)
 	http.SetCookie(w, &http.Cookie{
 		Name:    access,
 		Expires: time.Now(),
@@ -120,9 +116,8 @@ func (a *Auth) LogOut(w http.ResponseWriter, r *http.Request) {
 
 func (a *Auth) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	const op = "auth.auth.DeleteUser"
-	if corsSkip.EnableCors(w, r) {
-		return
-	}
+	corsSkip.EnableCors(w, r)
+
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 

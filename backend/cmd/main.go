@@ -8,6 +8,7 @@ import (
 	"github.com/wlcmtunknwndth/hackBPA/internal/broker/nats"
 	"github.com/wlcmtunknwndth/hackBPA/internal/config"
 	"github.com/wlcmtunknwndth/hackBPA/internal/handlers/event"
+	"github.com/wlcmtunknwndth/hackBPA/internal/lib/corsSkip"
 	"github.com/wlcmtunknwndth/hackBPA/internal/lib/slogResponse"
 	"github.com/wlcmtunknwndth/hackBPA/internal/storage/postgres"
 	"log/slog"
@@ -87,15 +88,26 @@ func main() {
 
 	authService := auth.Auth{Db: db}
 
+	router.Options("/register", corsSkip.EnableCors)
 	router.Post("/register", authService.Register)
-	router.Post("/login", authService.LogIn)
-	router.Post("/logout", authService.LogOut)
-	router.Delete("/delete_user", authService.DeleteUser)
 
+	router.Options("/login", corsSkip.EnableCors)
+	router.Post("/login", authService.LogIn)
+
+	router.Options("/logout", corsSkip.EnableCors)
+	router.Post("/logout", authService.LogOut)
+
+	router.Options("/delete_user", corsSkip.EnableCors)
+	router.Delete("/delete_user", authService.DeleteUser)
 	eventService := event.EventsHandler{Broker: ns}
 
+	router.Options("/create_event", corsSkip.EnableCors)
 	router.Post("/create_event", eventService.CreateEvent)
+
+	router.Options("/event", corsSkip.EnableCors)
 	router.Get("/event", eventService.GetEvent)
+
+	router.Options("/delete", corsSkip.EnableCors)
 	router.Delete("/delete", eventService.DeleteEvent)
 
 	if err = srv.ListenAndServe(); err != nil {
