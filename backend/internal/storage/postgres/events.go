@@ -65,6 +65,18 @@ func (s *Storage) DeleteEvent(ctx context.Context, id uint) error {
 	return nil
 }
 
+func (s *Storage) PatchEvent(ctx context.Context, id uint, event *storage.Event) error {
+	const op = "storage.postgres.events.PatchEvent"
+
+	_, err := s.driver.ExecContext(ctx, patchEvent, &event.Price,
+		&event.Restrictions, &event.Date, &event.Feature, &event.City,
+		&event.Address, &event.Name, &event.Description, &id)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	return nil
+}
+
 //func (s *Storage) GetEventsByFeature(date time.Time, feature string) []storage.Event {
 //
 //}
