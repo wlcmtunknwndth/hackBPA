@@ -30,7 +30,9 @@ const (
 
 func (e *EventsHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	const op = "handlers.event.CreateEvent"
-	corsSkip.EnableCors(&w)
+	if corsSkip.EnableCors(w, r) {
+		return
+	}
 	body := r.Body
 	defer func(body io.ReadCloser) {
 		err := body.Close()
@@ -64,7 +66,9 @@ func (e *EventsHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 
 func (e *EventsHandler) GetEvent(w http.ResponseWriter, r *http.Request) {
 	const op = "handlers.event.GetEvent"
-	corsSkip.EnableCors(&w)
+	if corsSkip.EnableCors(w, r) {
+		return
+	}
 	id, err := strconv.ParseUint(r.URL.Query().Get("id"), 10, 64)
 	if err != nil {
 		slog.Error("couldn't get event", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
@@ -91,7 +95,9 @@ func (e *EventsHandler) GetEvent(w http.ResponseWriter, r *http.Request) {
 
 func (e *EventsHandler) DeleteEvent(w http.ResponseWriter, r *http.Request) {
 	const op = "handlers.event.DeleteEvent"
-	corsSkip.EnableCors(&w)
+	if corsSkip.EnableCors(w, r) {
+		return
+	}
 	id, err := strconv.ParseUint(r.URL.Query().Get("id"), 10, 64)
 	if err != nil {
 		slog.Error("couldn't parse query", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
