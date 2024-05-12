@@ -33,6 +33,7 @@ const (
 	StatusEventCreated         = "Event created"
 	StatusInternalServerError  = "Internal server error"
 	StatusDeleted              = "Event deleted"
+	StatusPatched              = "Event patched"
 )
 
 func (e *EventsHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
@@ -111,6 +112,44 @@ func (e *EventsHandler) GetEvent(w http.ResponseWriter, r *http.Request) {
 		httpResponse.Write(w, http.StatusInternalServerError, StatusInternalServerError)
 		return
 	}
+}
+
+func (e *EventsHandler) PatchEvent(w http.ResponseWriter, r *http.Request) {
+	const op = "handlers.event.PatchEvent"
+
+	if !checkAdminRights(w, r) {
+		return
+	}
+
+	corsSkip.EnableCors(w, r)
+	body := r.Body
+	defer func(body io.ReadCloser) {
+		err := body.Close()
+		if err != nil {
+			slog.Error("couldn't close request body", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
+		}
+	}(body)
+
+	data, err := io.ReadAll(body)
+	if err != nil {
+		slog.Error("couldn't read body", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
+		httpResponse.Write(w, http.StatusBadRequest, StatusBadRequest)
+		return
+	}
+	var event storage.Event
+	if err = json.Unmarshal(data, &event); err != nil {
+		slog.Error("couldn't decode body", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
+		httpResponse.Write(w, http.StatusBadRequest, StatusBadRequest)
+		return
+	}
+
+	if err = e.Broker.AskPatch(&event); err != nil {
+		slog.Error("couldn't publish patch ask", slogResponse.SlogOp(op), slogResponse.SlogErr(err))
+		httpResponse.Write(w, http.StatusInternalServerError, StatusInternalServerError)
+		return
+	}
+
+	httpResponse.Write(w, http.StatusOK, StatusPatched)
 }
 
 func (e *EventsHandler) DeleteEvent(w http.ResponseWriter, r *http.Request) {

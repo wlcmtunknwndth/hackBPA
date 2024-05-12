@@ -93,6 +93,13 @@ func main() {
 	}
 	defer send.Unsubscribe()
 
+	patch, err := ns.EventPatcher(context.Background())
+	if err != nil {
+		slog.Error("couldn't run patcher", slogResponse.SlogErr(err))
+		return
+	}
+	defer patch.Unsubscribe()
+
 	slog.Info("successfully initialized NATS")
 
 	authService := auth.Auth{Db: db}
@@ -119,6 +126,9 @@ func main() {
 
 	router.Options("/delete", corsSkip.EnableCors)
 	router.Delete("/delete", eventService.DeleteEvent)
+
+	router.Options("/patch_event", corsSkip.EnableCors)
+	router.Get("/patch_events", eventService.PatchEvent)
 
 	if err = srv.ListenAndServe(); err != nil {
 		slog.Error("failed to run server: ", slogResponse.SlogErr(err))

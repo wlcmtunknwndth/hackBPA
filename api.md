@@ -95,11 +95,13 @@ Event JSON:
 
 Заголовки:
 
-200 - OK
-400 - Bad request (ошибка с параметром запроса)
-500 - Internal server error (внутренняя ошибка)
+200 -- OK
+400 -- Bad request (ошибка с параметром запроса)
+401 -- Unauthorized (пользователь не авторизован)
+403 -- Not enough permissions (пользователь не имеет прав)
+500 -- Internal server error (внутренняя ошибка)
 
-### GET /events?filter=["deaf", "blind" or other features]&ordering=["date", "price"]&order=["ascending", "descending"]&location=['moscow', etc] (НЕ РАБОТАЕТ)
+### GET /events?filter=["deaf", "blind" or other features]&ordering=["date", "price"]&order=["ascending", "descending"]&location=['moscow', etc] (Требует доработки)
 
 ```JSON
 {
@@ -149,9 +151,31 @@ id присваивается автоматически для того, что
 
 201 -- Event created
 400 -- Bad request(неправильный json)
+401 -- Unauthorized (пользователь не авторизован)
+403 -- Not enough permissions (пользователь не имеет прав)
 500 -- Internal server error(ошибка на сервере)
 
-### PATCH /patch_event (НЕ РАБОТАЕТ)
+### PATCH /patch_event (РАБОТАЕТ)
+
+```JSON
+{
+    "id": uint,
+    "price": uint,
+    "restrictions": uint,
+    "date": "timestamp as string",
+    "feature": "deaf",
+    "city":"moscow",
+    "address":"Malaya Ordinka, 3",
+    "name": "Mayhem",
+    "description": "chainsaw gutsfuck"
+}
+```
+
+200 -- EventPatched
+400 -- Bad request(неправильный json)
+401 -- Unauthorized (пользователь не авторизован)
+403 -- Not enough permissions (пользователь не имеет прав)
+500 -- Internal server error(ошибка на сервере)
 
 ### POST /delete_event?id=<id> (РАБОТАЕТ)
 
@@ -170,6 +194,8 @@ id присваивается автоматически для того, что
 
 Заголовки:
 
-200 - Deleted
-400 - Bad Request (неправильный параметр)
-500 - Internal server error (внутреняя ошибка)
+200 -- Deleted
+400 -- Bad Request (неправильный параметр)
+401 -- Unauthorized (пользователь не авторизован)
+403 -- Not enough permissions (пользователь не имеет прав)
+500 -- Internal server error (внутреняя ошибка)
