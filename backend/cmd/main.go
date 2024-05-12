@@ -65,6 +65,24 @@ func main() {
 		slog.Info("cache restored")
 	}
 
+	ticker := time.NewTicker(5 * time.Minute)
+	quit := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				if err := cacheSrv.SaveCache(); err != nil {
+					continue
+				}
+				slog.Info("made a cache backup")
+			case <-quit:
+				ticker.Stop()
+				return
+			}
+		}
+	}()
+	defer close(quit)
+
 	ns, err := nats.New(&cfg.Nats, db)
 	if err != nil {
 		slog.Error("couldn't run nats:", slogResponse.SlogErr(err))
