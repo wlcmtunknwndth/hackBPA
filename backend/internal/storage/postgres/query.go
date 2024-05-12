@@ -35,5 +35,10 @@ const (
 											`
 
 	deleteEvent        = "DELETE FROM events WHERE id = $1"
-	getEventsByFeature = "SELECT * FROM events WHERE data BETWEEN $1 AND $2 AND feature = $3"
+	getEventsByFeature = "SELECT * FROM events WHERE date BETWEEN $1 AND $2 AND feature = $3"
+
+	getCachedIds    = `SELECT * FROM cacher`
+	saveCache       = `INSERT INTO event(id) VALUES($1)`
+	deleteCache     = `DELETE FROM cacher WHERE id = $1`
+	isAlreadyCached = `SELECT * FROM cacher WHERE id = $1`
 )

@@ -67,14 +67,14 @@ func IsAdmin(r *http.Request) (bool, error) {
 	return inf.IsAdmin, nil
 }
 
-func Access(r *http.Request) (*Info, error) {
+func Access(r *http.Request) (bool, error) {
 	const op = "auth.jwtAuth.Access"
-	info, err := checkRequest(r)
+	_, err := checkRequest(r)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return false, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return info, err
+	return true, err
 }
 
 func Refresh(w http.ResponseWriter, r *http.Request) error {

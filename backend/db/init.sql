@@ -24,3 +24,7 @@ CREATE TABLE public.events(
     img_path VARCHAR(256),
     description VARCHAR(2048)
 );
+
+CREATE TABLE public.cache(
+    id BIGINT CHECK (id > 0) PRIMARY KEY
+)

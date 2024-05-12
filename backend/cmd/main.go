@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/wlcmtunknwndth/hackBPA/internal/auth"
 	"github.com/wlcmtunknwndth/hackBPA/internal/broker/nats"
+	"github.com/wlcmtunknwndth/hackBPA/internal/cacher"
 	"github.com/wlcmtunknwndth/hackBPA/internal/config"
 	"github.com/wlcmtunknwndth/hackBPA/internal/handlers/event"
 	"github.com/wlcmtunknwndth/hackBPA/internal/lib/corsSkip"
@@ -13,6 +14,7 @@ import (
 	"github.com/wlcmtunknwndth/hackBPA/internal/storage/postgres"
 	"log/slog"
 	"net/http"
+	"time"
 )
 
 const scope = "main"
@@ -55,6 +57,13 @@ func main() {
 		}
 	}(db)
 	slog.Info("successfully initialized storage")
+
+	cacheSrv := cacher.New(db, 2*time.Minute, 5*time.Minute)
+	if err = cacheSrv.Restore(); err != nil {
+		slog.Error("couldn't restore cache", slogResponse.SlogErr(err))
+	} else {
+		slog.Info("cache restored")
+	}
 
 	ns, err := nats.New(&cfg.Nats, db)
 	if err != nil {
@@ -99,7 +108,8 @@ func main() {
 
 	router.Options("/delete_user", corsSkip.EnableCors)
 	router.Delete("/delete_user", authService.DeleteUser)
-	eventService := event.EventsHandler{Broker: ns}
+
+	eventService := event.EventsHandler{Cache: cacheSrv, Broker: ns}
 
 	router.Options("/create_event", corsSkip.EnableCors)
 	router.Post("/create_event", eventService.CreateEvent)
