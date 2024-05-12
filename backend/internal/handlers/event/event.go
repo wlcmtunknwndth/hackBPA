@@ -64,7 +64,6 @@ func (e *EventsHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 		httpResponse.Write(w, http.StatusBadRequest, StatusBadRequest)
 		return
 	}
-	e.Cache.CacheOrder(event)
 
 	id, err := e.Broker.AskSave(&event)
 	if err != nil {
@@ -72,6 +71,8 @@ func (e *EventsHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 		httpResponse.Write(w, http.StatusInternalServerError, StatusInternalServerError)
 		return
 	}
+	event.Id = id
+	e.Cache.CacheOrder(event)
 
 	httpResponse.Write(w, http.StatusCreated, fmt.Sprintf("%s: id: %d", StatusEventCreated, id))
 }
