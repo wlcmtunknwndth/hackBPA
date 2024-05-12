@@ -15,7 +15,7 @@ onMounted(() => {
 <template>
   <main id="page"
         class="flexboxgrid_container__YXz7C CoreLayout_page__LDIK4 CoreLayout_pagePaddingTop__WezD8 CoreLayout_pagePaddingBottom__vI8wg">
-    <h1 class="_collectionAlias__title__dFmHC">Билеты на концерты в Санкт-Петербурге</h1>
+    <h1 class="_collectionAlias__title__dFmHC">Афиша в Санкт-Петербурге</h1>
     <div class="jsx-1021369771 DateRangePicker_container__EctZ_">
       <div class="DateRangePickerCalendar_container__tVkUb">
         <button type="button"
