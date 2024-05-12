@@ -24,7 +24,6 @@ type Nats struct {
 func New(cfg *config.Nats, db Storage) (*Nats, error) {
 	const op = "broker.nats.New"
 
-	//nats.DefaultU
 	natsService, err := nats.Connect(cfg.Address,
 		nats.RetryOnFailedConnect(cfg.Retry),
 		nats.MaxReconnects(cfg.MaxReconnects),
@@ -33,7 +32,6 @@ func New(cfg *config.Nats, db Storage) (*Nats, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	//time.Sleep(5 * time.Second)
 
 	if err = natsService.Flush(); err != nil {
 		return nil, fmt.Errorf("%s: flush: %w", op, err)
@@ -47,7 +45,3 @@ func New(cfg *config.Nats, db Storage) (*Nats, error) {
 func (n *Nats) Close() {
 	n.b.Close()
 }
-
-//func (n *Nats) Ping() error {
-//	return n.
-//}

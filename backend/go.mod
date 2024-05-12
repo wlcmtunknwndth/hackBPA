@@ -10,12 +10,10 @@ require (
 	github.com/nats-io/nats.go v1.34.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.9.0
-	github.com/wlcmtunknwndth/L0_WB v0.0.0-20240320113905-1aea209b1ea1
 )
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
-	github.com/brianvoe/gofakeit/v6 v6.28.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.17.3 // indirect
@@ -26,6 +24,7 @@ require (
 	github.com/stretchr/objx v0.5.2 // indirect
 	golang.org/x/crypto v0.18.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	olympos.io/encoding/edn v0.0.0-20201019073823-d3554ca0b0a3 // indirect
 )
