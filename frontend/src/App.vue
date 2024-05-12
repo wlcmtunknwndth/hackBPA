@@ -7,10 +7,11 @@ import ShowMoreComponent from "./components/ShowMoreComponent.vue";
     <div class="CoreLayout_container__2ZTtd">
       <div class="CoreLayout_innerLayout__TKiOh">
         <header id="header" class="CoreLayoutHeader_container__6x02M">
-          <div class="flexboxgrid_container__YXz7C CoreLayoutHeader_gridContainer__k84do"><a title="MTC LIVE"
-                                                                                             class="CoreLayoutHeader_logoLink__DvDCy"
-                                                                                             href="/sankt-peterburg"><img
-              src="/images/header/Logo.svg" title="MTC LIVE" alt="MTC LIVE"></a>
+          <div class="flexboxgrid_container__YXz7C CoreLayoutHeader_gridContainer__k84do">
+            <router-link :to="{ name: 'home' }" class="CoreLayoutHeader_logoLink__DvDCy">
+              <img src="/images/header/Logo.svg" title="MTC LIVE" alt="MTC LIVE">
+
+            </router-link>
             <div class="CoreLayoutHeader_search__K4SKu">
               <div class="Search_container__XfiK9 CoreLayoutSearch_search__aTT2H">
                 <div
@@ -70,7 +71,7 @@ import ShowMoreComponent from "./components/ShowMoreComponent.vue";
                                                                    href="/sankt-peterburg/venues/concert-hall/mts-live-hall-spb"><img
                     src="https://live.mts.ru/api/bff-sections/sections/25/icon" alt="МТС Live Холл"
                     class="CoreLayoutMenuItem_linkIcon__uXxfT">МТС Live Холл</a></li>
-                <li class="CoreLayoutMenuItem_container__luLtl CoreLayoutMenuItem_active__hUtMn"><a
+                <li class="CoreLayoutMenuItem_container__luLtl"><a
                     class="CoreLayoutMenuItem_link__Bo_mY" target="_self" href="/sankt-peterburg/collections/concerts">Концерты</a>
                 </li>
                 <li class="CoreLayoutMenuItem_container__luLtl"><a class="CoreLayoutMenuItem_link__Bo_mY" target="_self"
@@ -205,6 +206,15 @@ import ShowMoreComponent from "./components/ShowMoreComponent.vue";
                                                                          target="_self"
                                                                          href="/sankt-peterburg/collections/sport">Спорт</a>
                 </li>
+                <router-link :to="{ name: 'main' }">
+                  <li class="CoreLayoutFooterMenuBlock_menuItem__V99sD"><a title="Спорт"
+                                                                           class="CoreLayoutFooter_link___ElmY"
+                                                                           target="_self"
+                                                                           style="line-height: 20px;"
+                                                                           href="/sankt-peterburg/collections/sport">Доступно
+                    для людей с ограниченными возможностями</a>
+                  </li>
+                </router-link>
                 <li class="CoreLayoutFooterMenuBlock_menuItem__V99sD"><a title="Все площадки"
                                                                          class="CoreLayoutFooter_link___ElmY"
                                                                          target="_self" href="/sankt-peterburg/venues">Все

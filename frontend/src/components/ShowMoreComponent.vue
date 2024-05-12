@@ -1,6 +1,9 @@
 <script setup>
 import {computed, onMounted, ref} from "vue";
 
+import {useRoute} from 'vue-router'
+const route = useRoute()
+
 const isOpen = ref(false)
 
 const additionalClasses = computed(() => ({
@@ -76,6 +79,7 @@ onMounted(() => {
         </li>
         <li
             class="CoreLayoutMenuItem_container__luLtl CoreLayoutMenu_menuItem__JDxAI"
+            :class="{'CoreLayoutMenuItem_active__hUtMn': route.name === 'main' }"
             style="white-space: normal;height: auto;line-height: normal;"
         >
           <router-link :to="{ name: 'main' }">

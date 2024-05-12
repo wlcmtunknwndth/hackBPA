@@ -15,7 +15,7 @@ onMounted(() => {
 <template>
   <main id="page"
         class="flexboxgrid_container__YXz7C CoreLayout_page__LDIK4 CoreLayout_pagePaddingTop__WezD8 CoreLayout_pagePaddingBottom__vI8wg">
-    <h1 class="_collectionAlias__title__dFmHC">Билеты на концерты в Санкт-Петербурге</h1>
+    <h1 class="_collectionAlias__title__dFmHC">Афиша для людей с ограниченными возможностями и особенностями здоровья</h1>
     <div class="jsx-1021369771 DateRangePicker_container__EctZ_">
       <div class="DateRangePickerCalendar_container__tVkUb">
         <button type="button"
@@ -322,17 +322,6 @@ onMounted(() => {
     </div>
     <div class="FiltersContainer_container__2b5CT">
       <div class="FiltersContainer_filters__slbB5">
-        <div class="Select_rawInputContainer__6AfZX">
-          <div class="Tag_container__aLkPQ SelectRawInput_container__DRZ5_"><span class="Tag_children__r1Gec">Выберите жанр</span>
-            <div class="Tag_iconContainer__NZM9K">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
-                   class="Tag_icon__yzj_d Tag_triangleIcon__iuwqO">
-                <path fill="currentColor"
-                      d="M8.78 10.024a1 1 0 0 1-1.56 0l-1.92-2.4A1 1 0 0 1 6.08 6h3.84a1 1 0 0 1 .78 1.625l-1.92 2.399Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
         <div class="Select_rawInputContainer__6AfZX">
           <div class="Tag_container__aLkPQ SelectRawInput_container__DRZ5_"><span class="Tag_children__r1Gec">Площадка</span>
             <div class="Tag_iconContainer__NZM9K">
